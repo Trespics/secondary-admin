@@ -191,11 +191,11 @@ const ClassManagement = () => {
                   <div className="flex flex-col gap-3">
                     <div className="flex justify-between items-center text-sm font-medium">
                       <span className="text-slate-500 flex items-center gap-1.5"><UserCheck size={14} /> Students</span>
-                      <span className="text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full text-xs">0 Enrolled</span>
+                      <span className="text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full text-xs">{c.student_count || 0} Enrolled</span>
                     </div>
                     <div className="flex justify-between items-center text-sm font-medium">
                       <span className="text-slate-500 flex items-center gap-1.5"><BookOpen size={14} /> Subjects</span>
-                      <span className="text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full text-xs">0 Assigned</span>
+                      <span className="text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full text-xs">{c.subject_count || 0} Assigned</span>
                     </div>
                   </div>
                 </CardContent>

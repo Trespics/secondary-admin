@@ -42,7 +42,7 @@ const masomoLinks = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/admin/school", icon: Building2, label: "School Info" },
   { to: "/admin/users", icon: Users, label: "Users" },
-  { to: "/admin/classes", icon: GraduationCap, label: "Grades" },
+  { to: "/admin/classes", icon: GraduationCap, label: "Grades" },    
   { to: "/admin/subjects", icon: BookOpen, label: "Subjects" },
   { to: "/admin/teacher-assignments", icon: MapPin, label: "Link Teachers" },
   { to: "/admin/enrollment", icon: UserPlus, label: "Enrollment" },
