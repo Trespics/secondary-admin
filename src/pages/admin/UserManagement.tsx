@@ -13,7 +13,9 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
-  X
+  X,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,6 +66,7 @@ const UserManagement = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [classes, setClasses] = useState<any[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   // New user form state
   const [newUser, setNewUser] = useState({
@@ -101,6 +104,7 @@ const UserManagement = () => {
       toast.success(`${newUser.role.charAt(0).toUpperCase() + newUser.role.slice(1)} created successfully!`);
       setIsCreateOpen(false);
       setNewUser({ name: "", email: "", password: "", phone: "", role: "student", student_id: "", parent_contact: "", class_id: "" });
+      setShowPassword(false);
       fetchUsers();
     } catch (err: any) {
       toast.error(err.response?.data?.error || "Failed to create user");
@@ -184,7 +188,22 @@ const UserManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Password *</Label>
-                    <Input type="password" value={newUser.password} onChange={(e) => setNewUser({...newUser, password: e.target.value})} placeholder="Min 6 characters" />
+                    <div className="relative">
+                      <Input 
+                        type={showPassword ? "text" : "password"} 
+                        value={newUser.password} 
+                        onChange={(e) => setNewUser({...newUser, password: e.target.value})} 
+                        placeholder="Min 6 characters" 
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Phone</Label>

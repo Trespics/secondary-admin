@@ -36,14 +36,12 @@ import DOMPurify from 'dompurify';
 interface Strand {
   id: string;
   name: string;
-  description: string;
 }
 
 interface SubStrand {
   id: string;
   strand_id: string;
   name: string;
-  description: string;
 }
 
 interface LearningOutcome {
@@ -205,7 +203,7 @@ const SubjectContent = () => {
     setEditingItem(item || null);
     setFormData({
       name: item?.name || "",
-      description: item?.description || (type === 'lo' ? item?.description : "") || ""
+      description: type === 'lo' ? (item?.description || "") : ""
     });
     setIsModalOpen(true);
   };
@@ -337,7 +335,6 @@ const SubjectContent = () => {
                 </CardHeader>
                 <CardContent>
                   <CardTitle className="mb-2">{strand.name}</CardTitle>
-                  <CardDescription className="line-clamp-2">{strand.description || "No description provided."}</CardDescription>
                   <div className="mt-4 flex items-center text-xs font-semibold text-primary uppercase tracking-wider">
                     View Sub-strands <ChevronRight size={14} className="ml-1" />
                   </div>
@@ -362,7 +359,6 @@ const SubjectContent = () => {
                 </CardHeader>
                 <CardContent>
                   <CardTitle className="mb-2">{sub.name}</CardTitle>
-                  <CardDescription className="line-clamp-2">{sub.description || "No description provided."}</CardDescription>
                   <div className="mt-4 flex items-center text-xs font-semibold text-primary uppercase tracking-wider">
                     View Learning Outcomes <ChevronRight size={14} className="ml-1" />
                   </div>
@@ -434,26 +430,15 @@ const SubjectContent = () => {
             <form onSubmit={handleSubmit}>
               <div className="p-6 space-y-4">
                 {modalType !== 'lo' ? (
-                  <>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Name</label>
-                      <Input 
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        placeholder={modalType === 'strand' ? "e.g. Numbers" : "e.g. Fractions"}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Description</label>
-                      <textarea 
-                        className="w-full p-3 border rounded-lg bg-transparent min-h-[100px] text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-                        value={formData.description}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
-                        placeholder="Provide details about this topic..."
-                      />
-                    </div>
-                  </>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Name</label>
+                    <Input 
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      placeholder={modalType === 'strand' ? "e.g. Numbers" : "e.g. Fractions"}
+                      required
+                    />
+                  </div>
                 ) : (
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Outcome Description</label>

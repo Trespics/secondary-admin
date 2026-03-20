@@ -225,7 +225,6 @@ const SubStrandItem = ({ subStrand }: { subStrand: any }) => {
             <div className="flex justify-between items-start">
                 <div className="space-y-1">
                     <h4 className="font-bold text-slate-900">{subStrand.name}</h4>
-                    <p className="text-xs text-slate-500">{subStrand.description || "No description provided."}</p>
                 </div>
                 <Badge variant="outline" className="text-[10px] uppercase tracking-tighter text-indigo-400 border-indigo-100">SUB-STRAND</Badge>
             </div>

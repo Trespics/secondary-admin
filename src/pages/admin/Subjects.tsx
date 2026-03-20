@@ -34,7 +34,6 @@ interface Subject {
   name: string;
   code: string;
   image_url: string;
-  description: string;
   created_at: string;
 }
 
@@ -65,7 +64,6 @@ const Subjects = () => {
   const [formData, setFormData] = useState({
     name: "",
     code: "",
-    description: "",
     image_url: ""
   });
   const [uploading, setUploading] = useState(false);
@@ -127,7 +125,6 @@ const Subjects = () => {
       setFormData({
         name: subject.name,
         code: subject.code || "",
-        description: subject.description || "",
         image_url: subject.image_url || ""
       });
     } else {
@@ -135,7 +132,6 @@ const Subjects = () => {
       setFormData({
         name: "",
         code: "",
-        description: "",
         image_url: ""
       });
     }
@@ -158,7 +154,7 @@ const Subjects = () => {
         toast.success("Subject updated successfully");
       } else {
         const { data } = await api.post("/admin/subjects", formData);
-        subjectId = data.id;
+        subjectId = data.id || data[0]?.id; // Robust handling for both single and array returns
         // If we are in a grade view, automatically assign this subject to the grade
         if (selectedGrade) {
         await api.post("/admin/teacher-assignments", {
@@ -347,9 +343,6 @@ const Subjects = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10">
-                        {assignment.subjects?.description || "No description provided for this subject."}
-                      </p>
                       <div className="flex gap-2">
                         <Link to={`/admin/subjects/${assignment.subject_id}`} className="flex-1">
                           <Button variant="outline" className="w-full gap-2 text-xs h-9">
@@ -415,16 +408,7 @@ const Subjects = () => {
                   <Input 
                     value={formData.code}
                     onChange={(e) => setFormData({...formData, code: e.target.value})}
-                    placeholder="e.g. MATH-01"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Description</label>
-                  <textarea 
-                    className="w-full p-3 border rounded-lg bg-transparent min-h-[100px] text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-                    value={formData.description}
-                    onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    placeholder="Describe what students will learn..."
+                    placeholder="e.g. MATH-01"   
                   />
                 </div>
                 <div className="space-y-2">
