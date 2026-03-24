@@ -70,26 +70,34 @@ const UserManagement = () => {
 
   // New user form state
   const [newUser, setNewUser] = useState({
-    name: "", email: "", password: "", phone: "", role: "student", student_id: "", parent_contact: "", class_id: ""
+    name: "", email: "", password: "12345678", phone: "", role: "student", student_id: "", parent_contact: "", class_id: ""
   });
 
   const fetchUsers = async () => {
     try {
-      const [{ data: usersData }, { data: classesData }] = await Promise.all([
-        api.get("/admin/users"),
-        api.get("/admin/classes")
-      ]);
-      setUsers(usersData || []);
-      setClasses(classesData || []);
+      setLoading(true);
+      const { data } = await api.get("/admin/users");
+      setUsers(data || []);
     } catch (err) {
-      console.error("Fetch data error:", err);
+      console.error("Error fetching users:", err);
+      toast.error("Failed to load users");
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchClasses = async () => {
+    try {
+      const { data } = await api.get("/admin/classes");
+      setClasses(data || []);
+    } catch (err) {
+      console.error("Error fetching classes:", err);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
+    fetchClasses();
   }, []);
 
   const handleCreateUser = async (e: React.FormEvent) => {
@@ -103,7 +111,7 @@ const UserManagement = () => {
       await api.post("/admin/users", newUser);
       toast.success(`${newUser.role.charAt(0).toUpperCase() + newUser.role.slice(1)} created successfully!`);
       setIsCreateOpen(false);
-      setNewUser({ name: "", email: "", password: "", phone: "", role: "student", student_id: "", parent_contact: "", class_id: "" });
+      setNewUser({ name: "", email: "", password: "12345678", phone: "", role: "student", student_id: "", parent_contact: "", class_id: "" });
       setShowPassword(false);
       fetchUsers();
     } catch (err: any) {
