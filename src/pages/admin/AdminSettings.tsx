@@ -68,7 +68,7 @@ const AdminSettings = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label>System Name</Label>
-                            <Input defaultValue="TRESPICS CBC Management" />
+                            <Input defaultValue="Florante CBC Management" />
                         </div>
                         <div className="space-y-2">
                             <Label>Support Email</Label>

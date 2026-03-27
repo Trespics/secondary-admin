@@ -28,7 +28,7 @@ const PublicNav = () => {
     >
       <div className="nav-inner">
         <Link to="/" className="nav-logo">
-          TRESPICS
+          Florante
         </Link>
 
         {/* Mobile Menu Button */}

@@ -137,7 +137,7 @@ const StudentEnrollment = () => {
                      <Select value={enrollmentForm.student_id} onValueChange={v => setEnrollmentForm({...enrollmentForm, student_id: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200"><SelectValue placeholder="Select Student" /></SelectTrigger>
                         <SelectContent>
-                           {students.map(s => <SelectItem key={s.id} value={s.id}>{s.name} ({s.email})</SelectItem>)}
+                           {students.map(s => <SelectItem key={s.id} value={s.id}>{s.name}{s.email ? ` (${s.email})` : (s.student_id ? ` [${s.student_id}]` : '')}</SelectItem>)}
                         </SelectContent>
                      </Select>
                    </div>

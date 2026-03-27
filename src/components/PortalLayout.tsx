@@ -57,7 +57,7 @@ const PortalLayout = ({ children, type }: PortalLayoutProps) => {
           >
             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <span className="mobile-logo">TRESPICS</span>
+          <span className="mobile-logo">Florante</span>
           <div className="header-avatar">
             <span className="avatar-initials">
               {user?.name?.charAt(0) || 'U'}

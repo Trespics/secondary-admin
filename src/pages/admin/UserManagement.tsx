@@ -15,7 +15,9 @@ import {
   Loader2,
   X,
   Eye,
-  EyeOff
+  EyeOff,
+  FileUp,
+  Download
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,6 +69,7 @@ const UserManagement = () => {
   const [creating, setCreating] = useState(false);
   const [classes, setClasses] = useState<any[]>([]);
   const [showPassword, setShowPassword] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   // New user form state
   const [newUser, setNewUser] = useState({
@@ -142,6 +145,43 @@ const UserManagement = () => {
     }
   };
 
+  const handleBulkImport = async (file: File) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const text = e.target?.result as string;
+      const lines = text.split('\n');
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      
+      const usersToImport = lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim());
+        if (values.length < headers.length) return null;
+        
+        const user: any = {};
+        headers.forEach((h, i) => {
+          user[h] = values[i];
+        });
+        return user;
+      }).filter(u => u && u.name);
+
+      if (usersToImport.length === 0) {
+        toast.error("No valid user data found in CSV");
+        return;
+      }
+
+      setImporting(true);
+      try {
+        const { data } = await api.post("/admin/users/bulk", { users: usersToImport });
+        toast.success(data.message);
+        fetchUsers();
+      } catch (err: any) {
+        toast.error(err.response?.data?.error || "Failed to import users");
+      } finally {
+        setImporting(false);
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const filtered = users.filter(u =>
     u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -160,7 +200,27 @@ const UserManagement = () => {
             <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
             <p className="text-muted-foreground">Register and manage students, teachers, and administrators.</p>
           </div>
-          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+          <div className="flex gap-2">
+            <Input
+              type="file"
+              accept=".csv"
+              className="hidden"
+              id="csv-upload"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleBulkImport(file);
+              }}
+            />
+            <Button 
+              variant="outline" 
+              className="gap-2 border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+              onClick={() => document.getElementById('csv-upload')?.click()}
+              disabled={importing}
+            >
+              {importing ? <Loader2 size={18} className="animate-spin" /> : <FileUp size={18} />}
+              Import CSV
+            </Button>
+            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2">
                 <UserPlus size={18} /> Register New User
@@ -188,10 +248,18 @@ const UserManagement = () => {
                     <Label>Full Name *</Label>
                     <Input value={newUser.name} onChange={(e) => setNewUser({...newUser, name: e.target.value})} placeholder="John Doe" />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Email *</Label>
-                    <Input type="email" value={newUser.email} onChange={(e) => setNewUser({...newUser, email: e.target.value})} placeholder="john@school.com" />
-                  </div>
+                  {newUser.role !== "student" && (
+                    <div className="space-y-2">
+                      <Label>Email *</Label>
+                      <Input type="email" value={newUser.email} onChange={(e) => setNewUser({...newUser, email: e.target.value})} placeholder="john@school.com" />
+                    </div>
+                  )}
+                  {newUser.role === "student" && (
+                     <div className="space-y-2">
+                      <Label>Registration ID (Auto if empty)</Label>
+                      <Input value={newUser.student_id} onChange={(e) => setNewUser({...newUser, student_id: e.target.value})} placeholder="STD-2024-001" />
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -213,23 +281,15 @@ const UserManagement = () => {
                       </button>
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Phone</Label>
-                    <Input value={newUser.phone} onChange={(e) => setNewUser({...newUser, phone: e.target.value})} placeholder="+254 7XX XXX XXX" />
-                  </div>
+                  {newUser.role !== "student" && (
+                    <div className="space-y-2">
+                      <Label>Phone</Label>
+                      <Input value={newUser.phone} onChange={(e) => setNewUser({...newUser, phone: e.target.value})} placeholder="+254 7XX XXX XXX" />
+                    </div>
+                  )}
                 </div>
                 {newUser.role === "student" && (
                   <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Admission Number</Label>
-                        <Input value={newUser.student_id} onChange={(e) => setNewUser({...newUser, student_id: e.target.value})} placeholder="STD-2024-001" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Parent Contact</Label>
-                        <Input value={newUser.parent_contact} onChange={(e) => setNewUser({...newUser, parent_contact: e.target.value})} placeholder="+254 7XX XXX XXX" />
-                      </div>
-                    </div>
                     <div className="space-y-2">
                       <Label>Assign Grade/Class</Label>
                       <Select value={newUser.class_id} onValueChange={(val) => setNewUser({...newUser, class_id: val})}>
@@ -254,8 +314,9 @@ const UserManagement = () => {
             </DialogContent>
           </Dialog>
         </div>
+      </div>
 
-        <Card className="shadow-sm border-none mb-8">
+      <Card className="shadow-sm border-none mb-8">
             <CardContent className="p-4 flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
@@ -303,7 +364,7 @@ const UserManagement = () => {
                                     </Avatar>
                                     <div className="flex flex-col">
                                         <span className="font-medium">{user.name}</span>
-                                        <span className="text-xs text-muted-foreground">{user.email}</span>
+                                        <span className="text-xs text-muted-foreground">{user.email || user.student_id || "No contact info"}</span>
                                     </div>
                                 </div>
                             </TableCell>
