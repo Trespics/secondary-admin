@@ -44,6 +44,7 @@ const masomoLinks = [
   { to: "/admin/users", icon: Users, label: "Users" },
   { to: "/admin/classes", icon: GraduationCap, label: "Grades" },    
   { to: "/admin/subjects", icon: BookOpen, label: "Subjects" },
+  { to: "/admin/results", icon: FileText, label: "Results" },
   { to: "/admin/teacher-assignments", icon: MapPin, label: "Link Teachers" },
   { to: "/admin/enrollment", icon: UserPlus, label: "Enrollment" },
   // { to: "/admin/cbc-curriculum", icon: Layers, label: "CBC Framework" },

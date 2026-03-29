@@ -14,6 +14,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminProfile from "./pages/admin/AdminProfile";
 import Subjects from "./pages/admin/Subjects";
 import SubjectContent from "./pages/admin/SubjectContent";
+import ResultsManagement from "./pages/admin/ResultsManagement";
 import ClassManagement from "./pages/admin/ClassManagement";
 import TeacherAssignments from "./pages/admin/TeacherAssignments";
 import StudentEnrollment from "./pages/admin/StudentEnrollment";
@@ -67,6 +68,7 @@ function App() {
               <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
               <Route path="/admin/subjects" element={<ProtectedRoute><Subjects /></ProtectedRoute>} />
               <Route path="/admin/subjects/:id" element={<ProtectedRoute><SubjectContent /></ProtectedRoute>} />
+              <Route path="/admin/results" element={<ProtectedRoute><ResultsManagement /></ProtectedRoute>} />
               <Route path="/admin/classes" element={<ProtectedRoute><ClassManagement /></ProtectedRoute>} />
               <Route path="/admin/teacher-assignments" element={<ProtectedRoute><TeacherAssignments /></ProtectedRoute>} />
               <Route path="/admin/enrollment" element={<ProtectedRoute><StudentEnrollment /></ProtectedRoute>} />
