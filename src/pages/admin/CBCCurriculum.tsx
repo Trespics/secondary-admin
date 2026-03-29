@@ -3,22 +3,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import api from "@/lib/api";
 import { 
-  BookOpen, 
   Plus, 
-  Edit2, 
-  Trash2, 
   Loader2,
   ListTree,
   Target,
   ChevronDown,
   ChevronRight,
-  Database,
   UploadCloud,
   Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -243,7 +238,7 @@ const SubStrandItem = ({ subStrand }: { subStrand: any }) => {
                     <Plus size={10} /> Add Outcome
                 </button>
             </div>
-        </div>
+        </div>     
     );
 };
 

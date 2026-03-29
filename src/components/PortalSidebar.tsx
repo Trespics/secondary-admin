@@ -119,7 +119,7 @@ const PortalSidebar = ({ type, isOpen: propIsOpen, onClose }: SidebarProps) => {
       >
         <div className="sidebar-header">
           <Home className="header-icon" />
-          <span className="header-title">Florante</span>
+          <span className="header-title">FloranteHub</span>
         </div>
 
         <nav className="sidebar-nav">

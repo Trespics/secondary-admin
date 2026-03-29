@@ -367,17 +367,20 @@ const SubjectContent = () => {
             ))}
 
             {viewLevel === 'learning-outcomes' && learningOutcomes.map(lo => (
-              <Card key={lo.id} className="group border-l-4 border-l-green-500 hover:shadow-md transition-all w-96">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex-1">
+              <Card key={lo.id} className="group border-l-4 border-l-green-500 hover:shadow-md transition-all h-full">
+                <CardContent className="p-6 h-full w-full">
+                  <div className="flex flex-col md:flex-row justify-between items-start gap-4 h-full">
+                    <div className="flex-1 w-full overflow-hidden">
                       <div className="flex items-start gap-4 mb-3">
-                        <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-500 shrink-0 mt-1">
+                        <div className="h-8 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-500 shrink-0 mt-1">
                           <Target size={16} />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="text-sm text-muted-foreground mb-2">Learning Outcome</div>
-                          <div className="prose max-w-none text-base font-medium" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(lo.description || '') }} />
+                          <div 
+                            className="prose prose-sm max-w-none text-base font-medium break-words overflow-wrap-anywhere whitespace-pre-wrap" 
+                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(lo.description || '') }} 
+                          />
                         </div>
                       </div>
                     </div>
