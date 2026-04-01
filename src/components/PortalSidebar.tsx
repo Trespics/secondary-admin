@@ -57,7 +57,7 @@ const masomoLinks = [
 
 const PortalSidebar = ({ type, isOpen: propIsOpen, onClose }: SidebarProps) => {
   const { pathname } = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   
@@ -120,7 +120,7 @@ const PortalSidebar = ({ type, isOpen: propIsOpen, onClose }: SidebarProps) => {
       >
         <div className="sidebar-header">
           <Home className="header-icon" />
-          <span className="header-title">FloranteHub</span>
+          <span className="header-title">{user?.schools?.name || "School Portal"}</span>
         </div>
 
         <nav className="sidebar-nav">

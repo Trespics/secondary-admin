@@ -61,6 +61,19 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 
+const COUNTRY_CODES = [
+  { code: "+254", country: "KE" },
+  { code: "+255", country: "TZ" },
+  { code: "+256", country: "UG" },
+  { code: "+250", country: "RW" },
+  { code: "+257", country: "BI" },
+  { code: "+1", country: "US/CA" },
+  { code: "+44", country: "UK" },
+  { code: "+91", country: "IN" },
+  { code: "+234", country: "NG" },
+  { code: "+27", country: "ZA" },
+];
+
 const UserManagement = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,10 +83,11 @@ const UserManagement = () => {
   const [classes, setClasses] = useState<any[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [countryCode, setCountryCode] = useState("+254");
 
   // New user form state
   const [newUser, setNewUser] = useState({
-    name: "", email: "", password: "12345678", phone: "", role: "student", student_id: "", parent_contact: "", class_id: ""
+    name: "", email: "", password: "12345678", phone: "", role: "student", student_id: "", parent_name: "", parent_contact: "", class_id: ""
   });
 
   const fetchUsers = async () => {
@@ -105,16 +119,28 @@ const UserManagement = () => {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newUser.name || !newUser.email || !newUser.password || !newUser.role) {
+    if (!newUser.name || !newUser.password || !newUser.role) {
       toast.error("Please fill in all required fields.");
+      return;
+    }
+    if (newUser.role !== "student" && !newUser.email) {
+      toast.error("Email is required for teachers and admins.");
+      return;
+    }
+    if (newUser.role === "student" && (!newUser.parent_name || !newUser.parent_contact)) {
+      toast.error("Parent name and contact are required for students.");
       return;
     }
     setCreating(true);
     try {
-      await api.post("/admin/users", newUser);
+      const payload = { ...newUser };
+      if (payload.phone) payload.phone = `${countryCode}${payload.phone.replace(/^0+/, '')}`;
+      if (payload.parent_contact) payload.parent_contact = `${countryCode}${payload.parent_contact.replace(/^0+/, '')}`;
+
+      await api.post("/admin/users", payload);
       toast.success(`${newUser.role.charAt(0).toUpperCase() + newUser.role.slice(1)} created successfully!`);
       setIsCreateOpen(false);
-      setNewUser({ name: "", email: "", password: "12345678", phone: "", role: "student", student_id: "", parent_contact: "", class_id: "" });
+      setNewUser({ name: "", email: "", password: "12345678", phone: "", role: "student", student_id: "", parent_name: "", parent_contact: "", class_id: "" });
       setShowPassword(false);
       fetchUsers();
     } catch (err: any) {
@@ -281,15 +307,48 @@ const UserManagement = () => {
                       </button>
                     </div>
                   </div>
-                  {newUser.role !== "student" && (
+                  {newUser.role !== "student" ? (
                     <div className="space-y-2">
                       <Label>Phone</Label>
-                      <Input value={newUser.phone} onChange={(e) => setNewUser({...newUser, phone: e.target.value})} placeholder="+254 7XX XXX XXX" />
+                      <div className="flex gap-2">
+                        <Select value={countryCode} onValueChange={setCountryCode}>
+                          <SelectTrigger className="w-[110px]">
+                            <SelectValue placeholder="Code" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {COUNTRY_CODES.map(c => (
+                              <SelectItem key={c.code} value={c.code}>{c.country} {c.code}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Input className="flex-1" value={newUser.phone} onChange={(e) => setNewUser({...newUser, phone: e.target.value})} placeholder="7XX XXX XXX" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label>Parent Name *</Label>
+                      <Input value={newUser.parent_name} onChange={(e) => setNewUser({...newUser, parent_name: e.target.value})} placeholder="Jane Doe" />
                     </div>
                   )}
                 </div>
                 {newUser.role === "student" && (
-                  <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Parent Contact (Phone) *</Label>
+                      <div className="flex gap-2">
+                        <Select value={countryCode} onValueChange={setCountryCode}>
+                          <SelectTrigger className="w-[110px]">
+                            <SelectValue placeholder="Code" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {COUNTRY_CODES.map(c => (
+                              <SelectItem key={c.code} value={c.code}>{c.country} {c.code}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Input className="flex-1" value={newUser.parent_contact} onChange={(e) => setNewUser({...newUser, parent_contact: e.target.value})} placeholder="7XX XXX XXX" />
+                      </div>
+                    </div>
                     <div className="space-y-2">
                       <Label>Assign Grade/Class</Label>
                       <Select value={newUser.class_id} onValueChange={(val) => setNewUser({...newUser, class_id: val})}>
@@ -301,7 +360,7 @@ const UserManagement = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                  </>
+                  </div>
                 )}
                 <div className="flex gap-2 justify-end pt-2">
                   <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
